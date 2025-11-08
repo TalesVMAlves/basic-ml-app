@@ -53,7 +53,7 @@ except Exception as e:
     logger.error(traceback.format_exc())
 
 
-async def conditional_auth():
+async def conditional_auth(request: Request):
     """Returns user based on environment mode"""
     global ENV
     if ENV == "dev":
@@ -61,7 +61,7 @@ async def conditional_auth():
         return "dev_user"
     else:
         try:
-            return await verify_token()
+            return verify_token(request)
         except Exception as e:
             logger.error(f"Authentication failed: {str(e)}")
             raise HTTPException(status_code=401, detail="Authentication failed")

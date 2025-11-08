@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from unittest.mock import patch, MagicMock
 import certifi
 from app.app import app
-from app.auth import verify_token
+from app.app import conditional_auth
 
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -38,7 +38,7 @@ def test_predict_endpoint_success_mocked(mock_get_collection, mock_intent_classi
     """
     Testa o endpoint /predict com sucesso, mockando o modelo e o banco de dados.
     """
-    app.dependency_overrides[verify_token] = lambda: None
+    app.dependency_overrides[conditional_auth] = lambda: None
     
     mock_classifier_instance = MagicMock()
     mock_classifier_instance.predict.return_value = ("confusion", {"confusion": 0.9, "certainty": 0.1})
