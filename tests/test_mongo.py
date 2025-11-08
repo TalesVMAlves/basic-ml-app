@@ -33,17 +33,14 @@ def mongo_test_client():
 
 
 @patch('app.app.IntentClassifier')
-@patch('app.app.get_mongo_collection')
-def test_predict_endpoint_success_mocked(mock_get_collection, mock_intent_classifier, test_client):
+@patch('app.app.collection')
+def test_predict_endpoint_success_mocked(mock_collection, mock_intent_classifier, test_client):
     """
     Testa o endpoint /predict com sucesso, mockando o modelo e o banco de dados.
-    """    
+    """
     mock_classifier_instance = MagicMock()
     mock_classifier_instance.predict.return_value = ("confusion", {"confusion": 0.9, "certainty": 0.1})
     mock_intent_classifier.return_value = mock_classifier_instance
-
-    mock_collection = MagicMock()
-    mock_get_collection.return_value = mock_collection
 
     response = test_client.post("/predict?text=teste")
 
@@ -53,7 +50,7 @@ def test_predict_endpoint_success_mocked(mock_get_collection, mock_intent_classi
     assert data["owner"] == "dev_user"
     assert "confusion-v1" in data["predictions"]
     assert data["predictions"]["confusion-v1"]["top_intent"] == "confusion"
-    
+
     mock_collection.insert_one.assert_called_once()
 
 
@@ -75,7 +72,7 @@ def test_predict_endpoint_integration_with_db(mock_intent_classifier, test_clien
     mock_classifier_instance = MagicMock()
     mock_classifier_instance.predict.return_value = ("certainty", {"certainty": 0.98, "confusion": 0.02})
     mock_intent_classifier.return_value = mock_classifier_instance
-    
+
     with patch('app.app.collection', mongo_test_client["test_logs"]):
         response = test_client.post("/predict?text=Teste de integração com DB")
 
