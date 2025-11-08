@@ -111,8 +111,8 @@ async def predict(text: str, owner: str = Depends(conditional_auth)):
     }
     
     collection.insert_one(results)
-    results['id'] = str(results['_id'])
-    results.pop('_id')
+    results['id'] = str(results['id'])
+    results.pop('id')
 
     return JSONResponse(content=results)
 
