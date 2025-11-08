@@ -67,7 +67,7 @@ def test_root_endpoint(test_client):
 @patch('app.app.IntentClassifier')
 def test_predict_endpoint_integration_with_db(mock_intent_classifier, test_client, mongo_test_client):
     """
-    Testa a integração do endpoint /predict com um banco de dados MongoDB real.
+    Testa a integração do endpoint (/predict) com um banco de dados MongoDB real.
     """
     mock_classifier_instance = MagicMock()
     mock_classifier_instance.predict.return_value = ("certainty", {"certainty": 0.98, "confusion": 0.02})
