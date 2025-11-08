@@ -37,9 +37,7 @@ def mongo_test_client():
 def test_predict_endpoint_success_mocked(mock_get_collection, mock_intent_classifier, test_client):
     """
     Testa o endpoint /predict com sucesso, mockando o modelo e o banco de dados.
-    """
-    app.dependency_overrides[conditional_auth] = lambda: None
-    
+    """    
     mock_classifier_instance = MagicMock()
     mock_classifier_instance.predict.return_value = ("confusion", {"confusion": 0.9, "certainty": 0.1})
     mock_intent_classifier.return_value = mock_classifier_instance
@@ -47,11 +45,11 @@ def test_predict_endpoint_success_mocked(mock_get_collection, mock_intent_classi
     mock_collection = MagicMock()
     mock_get_collection.return_value = mock_collection
 
-    response = test_client.post("/predict?text=Isso é um teste")
+    response = test_client.post("/predict?text=teste")
 
     assert response.status_code == 200
     data = response.json()
-    assert data["text"] == "Isso é um teste"
+    assert data["text"] == "teste"
     assert data["owner"] == "dev_user"
     assert "confusion-v1" in data["predictions"]
     assert data["predictions"]["confusion-v1"]["top_intent"] == "confusion"
