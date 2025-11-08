@@ -17,3 +17,4 @@ python-dotenv==1.1.1
 fastapi
 pymongo[srv]==3.12
 httpx
+certifi

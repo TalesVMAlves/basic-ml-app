@@ -3,6 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 from pymongo import MongoClient
 from unittest.mock import patch, MagicMock
+import certifi
 
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -17,7 +18,7 @@ def test_client():
 def mongo_test_client():
     try:
         mongo_uri = os.getenv("MONGO_URI")
-        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
+        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000, tlsCAFile=certifi.where())
         client.admin.command('ping')
         print("\nConexão com MongoDB de teste bem-sucedida.")
         db = client["test_db"]
