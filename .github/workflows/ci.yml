@@ -44,6 +44,7 @@ jobs:
           MONGO_DB: ${{ secrets.MONGO_DB }}
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
           WANDB_MODEL_URL: ${{ secrets.WANDB_MODEL_URL }}
+          ENV: dev
         run: python -m pytest -rA
 
       # 7. Constroi a imagem Docker para validar o Dockerfile

@@ -9,7 +9,7 @@ MONGO_URI = os.getenv("MONGO_URI")
 MONGO_DB = os.getenv("MONGO_DB")
 
 def get_mongo_collection(collection_name: str):
-    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, tlsCAFile=certifi.where())
+    client = MongoClient(MONGO_URI,serverSelectionTimeoutMS=5000,tls=True,tlsAllowInvalidCertificates=True)
     db = client[MONGO_DB]
     return db[collection_name]
 
