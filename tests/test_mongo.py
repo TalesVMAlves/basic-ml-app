@@ -16,7 +16,7 @@ def test_client():
 @pytest.fixture(scope="module")
 def mongo_test_client():
     try:
-        mongo_uri = os.getenv("MONGO_URI_TEST", "mongodb://localhost:27017/")
+        mongo_uri = os.getenv("MONGO_URI")
         client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
         client.admin.command('ping')
         print("\nConexão com MongoDB de teste bem-sucedida.")
