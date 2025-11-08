@@ -15,4 +15,4 @@ pytest
 uvicorn==0.38.0
 python-dotenv==1.1.1
 fastapi
-pymongo
+pymongo[srv]==3.12
