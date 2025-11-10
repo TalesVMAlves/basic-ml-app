@@ -1,11 +1,11 @@
 import os
 import pytest
+from bson import ObjectId
 from fastapi.testclient import TestClient
 from pymongo import MongoClient
 from unittest.mock import patch, MagicMock
 import certifi
 from app.app import app
-from app.app import conditional_auth
 
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -42,12 +42,19 @@ def test_predict_endpoint_success_mocked(mock_collection, mock_intent_classifier
     mock_classifier_instance.predict.return_value = ("confusion", {"confusion": 0.9, "certainty": 0.1})
     mock_intent_classifier.return_value = mock_classifier_instance
 
+    def mock_insert_one(document):
+        document["_id"] = ObjectId()
+        return MagicMock(inserted_id=document["_id"])
+
+    mock_collection.insert_one.side_effect = mock_insert_one
+
     response = test_client.post("/predict?text=teste")
 
     assert response.status_code == 200
     data = response.json()
     assert data["text"] == "teste"
     assert data["owner"] == "dev_user"
+    assert "id" in data 
     assert "confusion-v1" in data["predictions"]
     assert data["predictions"]["confusion-v1"]["top_intent"] == "confusion"
 

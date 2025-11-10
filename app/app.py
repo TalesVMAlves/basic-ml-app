@@ -109,10 +109,8 @@ async def predict(text: str, owner: str = Depends(conditional_auth)):
         "predictions": predictions, 
         "timestamp": int(datetime.now(timezone.utc).timestamp())
     }
-    
     collection.insert_one(results)
-    results['id'] = str(results['_id'])
-    results.pop('id')
+    results['id'] = str(results.pop('_id'))
 
     return JSONResponse(content=results)
 
