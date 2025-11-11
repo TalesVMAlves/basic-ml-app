@@ -14,37 +14,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 load_dotenv()
 
 @pytest.fixture(scope="function")
-def mock_db_collection():
-    """
-    Cria o objeto mock para a coleção, mas NÃO o aplica.
-    O 'side_effect' simula o pymongo adicionando o _id ao dict.
-    """
-    mock_collection = MagicMock()
-    
-    def insert_one_side_effect(doc_to_insert):
-        """Simula o comportamento do pymongo.insert_one"""
-        inserted_id = ObjectId("60f1b0b3e1b3a1b3f1b3a1b3")
-        doc_to_insert['_id'] = inserted_id # Muta o dict
-        return MagicMock(inserted_id=inserted_id) # Retorna o resultado
-
-    mock_collection.insert_one.side_effect = insert_one_side_effect
-    
-    return mock_collection
-    
-@pytest.fixture(scope="function")
-def client(monkeypatch, mock_db_collection):
-    """
-    Fixture principal do client.
-    1. DEPENDE do mock_db_collection para obtê-lo.
-    2. APLICA o monkeypatch *antes* de criar o TestClient.
-    3. Cria o TestClient com a app já "patcheada".
-    """
-    
-    monkeypatch.setattr("app.app.collection", mock_db_collection)
-    
+def client():
     with TestClient(app) as c:
         yield c
-
 
 @pytest.fixture(scope="function")
 def mock_auth(monkeypatch):    
@@ -70,6 +42,25 @@ def mock_models(monkeypatch):
     
     return mock_models_dict, mock_model
 
+@pytest.fixture(scope="function")
+def mock_db_collection(monkeypatch):
+    """
+    Mocks o objeto 'collection' global em app.app.
+    """
+    mock_collection = MagicMock()
+
+    def insert_one_side_effect(doc_to_insert):
+        """Simula o comportamento do pymongo.insert_one"""
+        inserted_id = ObjectId("691283dfa2a42c9e7c7529d1")
+        doc_to_insert['_id'] = inserted_id
+        return MagicMock(inserted_id=inserted_id)
+
+    mock_collection.insert_one.side_effect = insert_one_side_effect
+
+    monkeypatch.setattr("app.app.collection", mock_collection)
+
+    return mock_collection
+
 
 def test_get_root(client):
     response = client.get("/")
@@ -93,7 +84,7 @@ def test_post_predict_unit(client, mock_auth, mock_models, mock_db_collection):
     data = response.json()
     assert data["text"] == test_text
     assert data["owner"] == "test_user_mocked" 
-    assert data["id"] == "691283dfa2a42c9e7c7529d1" 
+    assert data["id"] == "60f1b0b3e1b3a1b3f1b3a1b3" 
     
     assert "mock_model_v1" in data["predictions"]
     assert data["predictions"]["mock_model_v1"]["top_intent"] == "mock_intent"
