@@ -44,15 +44,18 @@ def mock_models(monkeypatch):
 
 @pytest.fixture(scope="function")
 def mock_db_collection(monkeypatch):
-
+    """
+    Mocks o objeto 'collection' global em app.app.
+    """
     mock_collection = MagicMock()
     
-    mock_insert_result = MagicMock(inserted_id=ObjectId("60f1b0b3e1b3a1b3f1b3a1b3"))
-    mock_collection.insert_one.return_value = mock_insert_result
-    
-    monkeypatch.setattr("app.app.collection", mock_collection)
-    
-    return mock_collection
+    def insert_one_side_effect(doc_to_insert):
+        """Simula o comportamento do pymongo.insert_one"""
+        inserted_id = ObjectId("60f1b0b3e1b3a1b3f1b3a1b3")
+        
+        doc_to_insert['_id'] = inserted_id
+        
+        return MagicMock(inserted_id=inserted_id)
 
 
 def test_get_root(client):
