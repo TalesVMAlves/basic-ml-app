@@ -53,7 +53,7 @@ except Exception as e:
     logger.error(traceback.format_exc())
 
 
-async def conditional_auth(request: Request):
+async def conditional_auth():
     """Returns user based on environment mode"""
     global ENV
     if ENV == "dev":
@@ -61,7 +61,7 @@ async def conditional_auth(request: Request):
         return "dev_user"
     else:
         try:
-            return verify_token(request)
+            return verify_token()
         except Exception as e:
             logger.error(f"Authentication failed: {str(e)}")
             raise HTTPException(status_code=401, detail="Authentication failed")
@@ -109,8 +109,10 @@ async def predict(text: str, owner: str = Depends(conditional_auth)):
         "predictions": predictions, 
         "timestamp": int(datetime.now(timezone.utc).timestamp())
     }
+    
     collection.insert_one(results)
-    results['id'] = str(results.pop('_id'))
+    results['id'] = str(results['_id'])
+    results.pop('_id')
 
     return JSONResponse(content=results)
 
