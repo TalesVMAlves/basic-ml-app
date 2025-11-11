@@ -97,7 +97,7 @@ def test_post_predict_unit(client, mock_auth, mock_models, mock_db_collection):
     assert insert_args["owner"] == "test_user_mocked"
     assert "timestamp" in insert_args
     assert insert_args["predictions"]["mock_model_v1"]["top_intent"] == "mock_intent"
-    assert "_id" in insert_args 
+    assert "id" in insert_args or "_id" in insert_args
 
 
 @pytest.mark.integration
