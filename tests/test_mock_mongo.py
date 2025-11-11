@@ -63,6 +63,11 @@ def test_get_root(client):
     assert "is running" in data["message"]
 
 def test_post_predict_unit(client, mock_auth, mock_models, mock_db_collection):
+    """
+    Testa a rota POST /predict (Teste de Unidade).
+    Usa mocks para autenticação, modelos e banco de dados.
+    Verifica se os mocks foram chamados corretamente.
+    """
     mock_models_dict, mock_model_instance = mock_models
     
     test_text = "oi tudo bem"
@@ -71,8 +76,8 @@ def test_post_predict_unit(client, mock_auth, mock_models, mock_db_collection):
     assert response.status_code == 200
     data = response.json()
     assert data["text"] == test_text
-    assert data["owner"] == "test_user_mocked"
-    assert data["id"] == "60f1b0b3e1b3a1b3f1b3a1b3"
+    assert data["owner"] == "test_user_mocked" 
+    assert data["id"] == "60f1b0b3e1b3a1b3f1b3a1b3" 
     
     assert "mock_model_v1" in data["predictions"]
     assert data["predictions"]["mock_model_v1"]["top_intent"] == "mock_intent"
@@ -80,11 +85,12 @@ def test_post_predict_unit(client, mock_auth, mock_models, mock_db_collection):
     mock_model_instance.predict.assert_called_once_with(test_text)
     
     mock_db_collection.insert_one.assert_called_once()
-    insert_args = mock_db_collection.insert_one.call_args[0][0]
+    insert_args = mock_db_collection.insert_one.call_args[0][0] 
     assert insert_args["text"] == test_text
     assert insert_args["owner"] == "test_user_mocked"
     assert "timestamp" in insert_args
     assert insert_args["predictions"]["mock_model_v1"]["top_intent"] == "mock_intent"
+    assert "_id" in insert_args 
 
 
 @pytest.mark.integration
