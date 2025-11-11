@@ -84,7 +84,7 @@ def test_post_predict_unit(client, mock_auth, mock_models, mock_db_collection):
     data = response.json()
     assert data["text"] == test_text
     assert data["owner"] == "test_user_mocked" 
-    assert data["id"] == "60f1b0b3e1b3a1b3f1b3a1b3" 
+    assert data["id"] == "691283dfa2a42c9e7c7529d1" 
     
     assert "mock_model_v1" in data["predictions"]
     assert data["predictions"]["mock_model_v1"]["top_intent"] == "mock_intent"
