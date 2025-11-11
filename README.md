@@ -65,7 +65,8 @@ Acompanhe abaixo a linha temporal das alterações realizadas até o momento:
 ├── dags/                       # Workflows integrados no Airflow
 │   └── ...                     # TODO
 ├── tests/                      # Testes unitários e de integração
-│   └── ...                     # TODO
+│   ├── test_intent_classifier.py                      
+│   └── test_mock_mongo.py
 ├── docker-compose.yml          # Arquivo de orquestração dos serviços envolvidos
 ├── requirements.txt            # Dependências do Python
 ├── .env                        # Variáveis de ambiente
